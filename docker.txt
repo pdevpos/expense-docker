@@ -1,0 +1,406 @@
+containerisation:
+=================
+Independent houses vs apartment:
+
+independent house:
+==================
+advantage:
+==========
+privacy/security
+more space
+
+disadvantage:
+=============
+expensive
+maintainence
+electricity
+water
+internet
+gas
+construction time is more ---> 6 months to 1 year
+
+Flat in apartment:
+==================
+adv:
+----
+* less maintainence
+* less cost
+* construction time is less
+* pool,garden,play area, etc...
+
+disadvantages:
+==============
+* less privacy
+
+Rest away PG, A room inside flat will be given for rent
+========================================================
+PG(adv)
+--------
+* no maintainence
+* fastest way to occupy
+* no agreements
+* cost very less
+disadv:
+========
+* very less privacy/security
+
+2 mem Family---->flat
+8 mem family ---> independent house
+
+
+Applications ----> Frontend,backend and DB
+Monolithic applications:
+below are the monolithic
+Enterprise applications:
+-----------------------
+* Frontend and backend are together---> JBOSS , weblogic,websphere
+* a small change in any component should go for release cycle.(this is a disadv)
+.ear ----> enterprise archive files
+Angular JS, React JS
+====================
+Frontend technologies
+
+Java,.NET,python backend technologies-----> Tomcat,JBOss
+.war ---> Web archive files
+API calls----> GET,POST,PUT,DELETE
+
+Now Microservices:
+===================
+User,Cart,Catalogue,Shipping,Payment,etc
+Microservices applications are very less memory.
+independent house ==physical server
+
+1 physical server host = 1 application
+
+Virtualisation: (monolithic applications)
+================
+* a big server can be logically divided into muiltiple servers.....
+* Hypervisor software----> it can host multiple guest servers.
+booting time ---> less time
+cost ---> less
+* 15 servers ----> 1 server RHEL,1 server windows,1server ubuntu
+* allocate RAM,FD allocate to VM's.
+2GB RAM, 100GB HD
+to install application or not installation.(if it consume 1 GB Harddisk,rest waste of HardDisk)
+to test application need to buy all server
+security ---> VM are isolated from one to another.
+a clear isolation is there between servers , but it should be configured.
+
+Microservices:(size are samll)==containersation
+==============================
+* you install containersation in VM,Containers don't block the resources.
+containers can get the resources dynamically . they dont block resources.
+yes this is an advantage.
+* resource utilisation is very high.
+booting time is very less -----may be in sec.
+portability
+
+* AMI  ---> take one full OS, create VM , install application runtime.
+(Java,Nodejs,python,.net).
+* configuration(creation of users,folders,permissions,etc)
+* download code and run the service.
+
+adv:
+===
+* if traffic increase,new server will work fastly.
+
+* Docker image === Bare minimum OS + App run time + system packages + appl port libraries and dependencies == image
+Bare minimum OS ---> no unnecessary packages ---> no cat command .
+
+what is a container?
+AMI is a static file
+EC2 instance ---> if you run AMI , it can create instance ---> Running version of AMI is called version.
+Docker image  ----> static file
+Docker container ----> running image of an instance is called a container.
+
+https://medium.com/@devops_83824/introduction-to-docker-compose-934238b14c13 for docker
+
+why docker container is most popular now a days?(search in google)
+https://joindevops.medium.com/-----by joindevops
+has to read:
+https://joindevops.medium.com/why-containerization-is-popular-how-to-understand-the-advantages-55261a17517c
+
+
+Launch an instance:
+===================
+* create a VM or ec2 instance
+* instance type : t3.micro
+* Install docker
+sudo yum install -y yum-utils
+sudo yum-config-manager --add-repo https://download.docker.com/linux/rhel/docker-ce.repo
+sudo yum install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugins
+start docker service
+systemctl enable docker
+systemctl start docker
+systemctl status docker
+docker cmds:
+===========
+* docker ps
+install docker ---> it will create a group called dockere
+users who are in docker group or root user can ony run docker cmds.
+to add in secondary group:
+when we were in ec2-user
+* sudo usermod -aG docker ec2-user
+
+usermod -a -G GROUP USER
+
+here docker is a "GROUP"
+ec2-user is a USER
+so adding ec2-user into a docker group
+* logout and run the same instance on linux server.
+docker cmds:
+============
+docker images ----> list down the images
+docker pull nginx ----> where to pull nginx
+docker pull nginx from docker hub
+(https://hub.docker.com)
+* group id, artifact id and version
+* username , image name and version
+nginx ----> Bare minimum OS (ubuntu/CentOs/debian/rhel) + nginx
+nginx:perl ----> Alpine is OS which is max 10MB
+to create a container:
+=======================
+docker create <image>:tag ---> this will create container.
+docker create nginx
+docker ps ----> it will show running containers.
+docker ps -a , all containers with any status.
+docker start "container id" ----> container will start running
+docker ps
+
+docker run = docker pull + docker create + docker run
+ docker rm "container id" --- will get cannot remove
+ docker rm -f "container id" ---forcely to remove
+ docker stop "container id"
+ docker ps -a
+ docker images
+ docker rmi "image id"
+ to remove all images we can use the below command:
+ * docker rmi `docker images -a -q`
+ * docker rm `docker ps -a -q`
+ docker run nginx,pull image,create container,start docker
+
+ how to run a docker in a background?
+ * docker run -d nginx, -d means detach.(run a container in the background)
+ How can you access docker container from internet?
+ By enabling port, we need to open host port that can redirect traffic to container.
+ * docker run -d -p <host-port>:<container-port> nginx
+ * docker run -d -p 8000:80 nginx
+ container port is fixed
+ but host-port is customized
+
+
+ Docker second video:
+ ====================
+ * To see docker logs
+ docker logs "container id"
+ * -f follow at running time
+ docker logs -f "container id"
+ * docker inspect "container id"
+ to get complete info about container
+ * to get full info about image
+ docker inspect "image id"
+ *** How to get the terminal access of running container?
+ docker exec -it "container id" bash
+ container is also a nano server.(ls -l , same service system like a linux but systemctl not support by containers)
+ Docker container is also a mini server.
+
+ **How to create my own custom images?
+ Dockerfile ----> it is a declarative way of creating a custom image.
+ declarative means easy syntax....
+ ** shell: keep all the commands in a file and run it ....
+ Dockerfile : keep all the instructions a file i.e dockerfile and build an image.
+
+ create a repo in github for dockerfile for custom images.
+ docker image = BaseOS+App run time+ system packages + application dependencies + appl code
+ FROM ----> which OS we are using
+ ------
+  in RHEL, images couldn't build , so we can use alternate OS either ubuntu or centos or almalinux
+
+ how to build an image in docker?
+ =================================
+ docker build -t url/username/image-name:tag .
+ here -t is a tag
+ it will check for a docker file
+ . is a current directory and tells that contains docker files.
+ ** to run dockerfiles , should go to that path.
+ cd FROM/ ls -l
+ to build docker image in local server:
+ * docker build -t from:1.0 .
+ * docker images
+
+ RUN:
+ ====
+ we will use RUN instruction to install packages and configure them.
+ Run instruction will execute at the time of image instructions.
+ to build an image
+ * docker build -t run:1.0 .
+ * docker images
+
+ almalinux:9  is an OS first it will check from local server whetger to pull or not
+ other wise it will pull from docker hub repos...
+
+ CMD: which is equal to "systemctl status frontend"
+ ====
+ this instruction will run at the time of container creation.
+ systemctl start backend ---> then only you can access backend application in linux server.
+ whatever the instruction you give in image to run as container, should run multiple times.
+ RUN vs CMD:
+ ==========
+ CMD--->Dockerfile(inside CMD )
+to build CMD
+* docker build -t CMD:1.0 ---> to build an image
+* docker images
+* to run customized image
+* docker run -d -p 8080:80 cmd:1.0
+will get container id.
+
+FROM almalinux:9
+RUN dnf install nginx -y
+CMD ["nginx","-g","daemon off;"]
+
+
+LABEL:
+======
+LABEL username="Pavani" \
+      course="DEvOps" \
+      Duration="3.5"
+
+ add LABEL folder under dockerfiles repo,
+ create a Dockerfile under LABEL folder.
+ FROM almalinux:9
+ LABEL username="Pavani" \
+       course="DEvOps" \
+       Duration="3.5"
+
+ How to filter an images?
+ docker images --help
+ there will be an option for filter
+ docker images -f label=course=DevOPs
+
+ EXPOSE:
+ =======
+ expose instruction will let the users know what are the ports used by image.
+ this is just for informational purpose.
+ FROM almalinux:9
+ EXPOSE 80/tcp
+ ** docker build -t expose:1.0 .
+ docker inspect "imageID" , if u don't know the port numbers of the specific image.
+
+ How can you push the image to docker hub?
+ docker build -t url/username/image-name:tag
+ * you can push images to docker hub,nexus,ECR,jfrog,etc....
+ url =docker.io
+ * company always push the images either ECR or nexus.....
+
+** to rename docker images:
+============================
+docker tag label:1.0 joindevops/label:1.0.0
+here name changed "joindevops/label:1.0.0" instead of "label:1.0"
+syntax:
+=======
+docker tag [OPTIONS] IMAGE[:TAG] [REGISTRYHOST/][USERNAME/]NAME[:TAG
+docker push NAME[:TAG]
+docker tag 518a41981a6a myRegistry.com/myImage
+docker push myRegistry.com/myImage
+
+**three steps to follow to move the images into a docker hub:
+=============================================================
+docker login --username username
+
+prompts for password if you omit --password which is recommended as it doesn't store it in your command history
+docker tag my-image username/my-repo
+
+docker push username/my-repo
+
+to move these label image into another hub like nexus, to rename image as like below:
+
+docker tag joindevops/label:1.0.0 label.nexus.com/joindevops/label:v1.0
+here joindevops is a username
+label:v1.0 is a Name:Tag
+
+****************************************************************
+
+How to pu the iamges from docker hub?
+* docker pull joindevops/label:1.0.0
+* docker images
+
+ * to delete/remove cached by using the below command
+ "delete system prune"
+
+
+ ENV:
+ ====
+ FROM almalinux:9
+ ENV trainer="sivakumar" \
+     course="DevOps" \
+     duration="100hrs"
+CMD ["sleep",'100']
+
+COPY:
+=====
+FROM almalinux:9
+RUN dnf install nginx -y
+RUN rm -rf /usr/share/nginx/index.html
+COPY index.html /usr/share/nginx/index.html
+
+
+COPY vs ADD:
+============
+COPY and ADD both are to copy the files from workspace to docker images, but add to extra advantages.....
+it can directly download the content from internet into the image(ADD)
+and it can directly untar the files into the image
+
+take raw format from github to download the image to the docker
+https://raw.githubusercontent.com/devps23/expense-ansible/main/ansible.sh
+
+FROM almalinux:9
+ADD https://raw.githubusercontent.com/devps23/expense-ansible/main/ansible.sh  /tmp/shell.txt
+CMD [ "sleep","60" ]
+docker exec -it "container-id" bash , it will get running container
+this file store into a container
+
+** donwload a simple tar file
+copy this tar file into a "ADD" Dockerfile " as sample-1.tar /tmp/
+
+COPY vs ADD is an important interview question
+
+
+what is the use of LABEL instruction in docker?
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
